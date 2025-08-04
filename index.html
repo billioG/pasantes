@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test de Orientación para Pasantes - 1Bot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #f4f9ff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #2c3e50;
+    }
+    .container {
+      background: #fff;
+      max-width: 900px;
+      width: 95%;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      margin: 20px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .header img {
+      height: 50px;
+    }
+    h1 {
+      text-align: center;
+      color: #1f4e79;
+    }
+    .question {
+      margin: 20px 0;
+    }
+    label {
+      display: block;
+      background: #eef3f9;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 5px 0;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    label:hover {
+      background: #dbe8f7;
+    }
+    button {
+      display: block;
+      background: #1f4e79;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 20px auto;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #163a5d;
+    }
+    .result {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #1f4e79;
+    }
+    @media(max-width: 600px){
+      .container{
+        padding: 15px;
+      }
+      label{
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://1bot.org/wp-content/uploads/2023/05/cropped-1bot-logo.png" alt="Logo 1Bot">
+      <h1>Test de Orientación para Pasantes</h1>
+    </div>
+    <form id="quizForm"></form>
+    <button type="button" onclick="calculateResult()">Ver Resultado</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const questions = [
+      "¿Qué actividad disfrutas más en un proyecto grupal?",
+      "¿Qué te emociona más aprender?",
+      "En un equipo, sueles ser la persona que propone ideas, analiza procesos, busca soluciones técnicas o mantiene comunicación constante?",
+      "¿Cómo te sientes al hablar por teléfono con clientes o desconocidos?",
+      "Si tuvieras que elegir una tarea para todo el día, sería:",
+      "¿Qué te motiva más en un proyecto?",
+      "¿Cómo te describirías mejor?",
+      "¿Qué disfrutas más al usar tecnología?",
+      "En una situación donde un proyecto tiene errores, tú…",
+      "¿Qué tipo de tareas disfrutas menos?",
+      "¿Qué actividad disfrutas más en tu tiempo libre?",
+      "¿Cómo prefieres trabajar en un proyecto?",
+      "¿Qué frase te representa mejor en un trabajo en equipo?",
+      "Cuando surge un problema inesperado, tú…",
+      "¿Cuál de estas herramientas te gustaría aprender a usar más?",
+      "Caso práctico: Un cliente se queja de un retraso en la entrega. ¿Qué harías?",
+      "Caso práctico: Un prototipo falla en la presentación. ¿Cómo lo enfrentas?",
+      "Caso práctico: Un usuario pide una nueva función técnica. ¿Cuál sería tu enfoque?",
+      "Caso práctico: El equipo discute sobre una estrategia. ¿Qué papel tomas?",
+      "Caso práctico: Un error técnico afecta a varios usuarios. ¿Qué priorizas?"
+    ];
+
+    const options = [
+      ["A) Pensar ideas creativas", "B) Probar productos", "C) Crear soluciones técnicas", "D) Hablar con personas y ayudar"],
+      ["A) Campañas publicitarias", "B) Diseñar productos", "C) Programación", "D) Mejorar experiencia del cliente"],
+      ["A) Propongo ideas creativas", "B) Analizo procesos y detalles", "C) Resuelvo problemas técnicos", "D) Mantengo comunicación y apoyo"],
+      ["A) Prefiero evitarlo", "B) Podría hacerlo si es necesario", "C) No me agrada", "D) Me siento cómodo y seguro"],
+      ["A) Crear contenido", "B) Revisar prototipo", "C) Programar", "D) Ayudar usuarios"],
+      ["A) Que la gente lo conozca", "B) Que sea útil y bien diseñado", "C) Que funcione bien técnicamente", "D) Que el cliente quede feliz"],
+      ["A) Creativo", "B) Analítico", "C) Lógico", "D) Empático"],
+      ["A) Reacción del público", "B) Probar funciones", "C) Programar", "D) Explicar a otros"],
+      ["A) Comunicar el mensaje", "B) Analizar fallos", "C) Buscar error técnico", "D) Contactar usuarios"],
+      ["A) Repetitivas y sin interacción", "B) Sin análisis ni mejoras", "C) Sin retos técnicos", "D) Sin comunicación"],
+      ["A) Crear contenido para redes", "B) Diseñar o armar productos", "C) Programar o resolver acertijos", "D) Ayudar a amigos"],
+      ["A) Aportar ideas creativas", "B) Probar funciones y mejoras", "C) Trabajar en soluciones técnicas", "D) Interactuar con personas"],
+      ["A) Que lo conozcan y lo amen", "B) Optimizarlo y hacerlo útil", "C) Que funcione bien", "D) Que los usuarios estén felices"],
+      ["A) Comunicar y motivar", "B) Analizar la falla", "C) Corregir lo técnico", "D) Contactar a los usuarios"],
+      ["A) Editores de video y publicidad", "B) Diseño 3D y robótica", "C) Editores de código", "D) CRM y soporte"],
+      ["A) Comunicar soluciones y calmar al cliente", "B) Analizar proceso y proponer ajustes", "C) Solucionar técnicamente el problema", "D) Dar soporte y seguimiento inmediato"],
+      ["A) Comunicar la situación al equipo", "B) Analizar fallas y proponer mejoras", "C) Solucionar técnicamente bajo presión", "D) Mantener comunicación con cliente"],
+      ["A) Explicar impacto en marketing", "B) Revisar factibilidad en diseño", "C) Analizar requisitos técnicos", "D) Escuchar y apoyar necesidades del usuario"],
+      ["A) Propongo ideas creativas", "B) Busco consenso y mejoras", "C) Defiendo soluciones técnicas", "D) Escucho y facilito el acuerdo"],
+      ["A) Comunicar y gestionar la crisis", "B) Revisar proceso de producto", "C) Solucionar fallo técnico de inmediato", "D) Contactar y apoyar a los usuarios"],
+    ];
+
+    const letters = ['A', 'B', 'C', 'D'];
+
+    const form = document.getElementById('quizForm');
+    questions.forEach((q, i) => {
+      const div = document.createElement('div');
+      div.classList.add('question');
+      div.innerHTML = `<p><strong>${i+1}. ${q}</strong></p>`;
+      options[i].forEach((opt, j) => {
+        div.innerHTML += `<label><input type='radio' name='q${i}' value='${letters[j]}' required> ${opt}</label>`;
+      });
+      form.appendChild(div);
+    });
+
+    function calculateResult(){
+      let scores = {A:0, B:0, C:0, D:0};
+      questions.forEach((_, i) => {
+        const answer = document.querySelector(`input[name='q${i}']:checked`);
+        if(answer) scores[answer.value]++;
+      });
+
+      let max = Math.max(scores.A, scores.B, scores.C, scores.D);
+      let area = [];
+      if(scores.A === max) area.push("Marketing");
+      if(scores.B === max) area.push("Diseño de Producto");
+      if(scores.C === max) area.push("Desarrollo");
+      if(scores.D === max) area.push("Customer Success");
+
+      document.getElementById('result').innerText = `Tu perfil se adapta mejor al área: ${area.join(' y ')}`;
+    }
+  </script>
+</body>
+</html>
